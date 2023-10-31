@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "structs.h"
+#include "funciones.h"
 
 void MenuUsers();
 void MenuSaldo();
@@ -28,6 +30,8 @@ main(){
 		printf("3- Uso de la tarjeta y/o billetera electronica.\n");
 		printf("4- Gestionar Medios de Transporte y Choferes.\n");
 		printf("0- Salir.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
@@ -81,6 +85,8 @@ void MenuUsers(){
 		printf("2- Lista de Usuarios\n");
 		printf("3- Modificar Usuarios.\n");
 		printf("0- Volver.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
@@ -93,18 +99,24 @@ void MenuUsers(){
 				puts("\n\t\t\t\tVolviendo al Menu.");
 				printf("-------------------------------------------------------------------------------\n\n");
 			break;
+			
 			case '1':
-				system("cls");
-				//Registra un nuevo Usuario
+				system("cls");				
+				altaUsuario(); //Registra un nuevo Usuario				
 			break;
+			
 			case '2':
 				system("cls");
-				//Lista todos los usuarios
+				
+				listaUsuarios(); //Lista todos los usuarios
+				
 			break;
+			
 			case '3':
 				system("cls");
 				//Modificar Usuarios
 			break;
+			
 			default:
 				system("cls");
 				printf("\n-------------------------------------------------------------------------------");
@@ -131,6 +143,8 @@ void MenuSaldo(){
 		printf("4- Listar Regargas.\n");
 		printf("5- Cantidad de Beneficiarios.\n");
 		printf("0- Volver.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
@@ -186,6 +200,8 @@ void MenuUsos(){
 		printf("1- SUBE.\n");
 		printf("2- Billetera electronica.\n");
 		printf("0- Volver.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
@@ -229,6 +245,8 @@ void MenuCT(){
 		printf("1- Choferes.\n");
 		printf("2- Transportes.\n");
 		printf("0- Volver.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
@@ -243,7 +261,7 @@ void MenuCT(){
 			break;
 			case '1':
 				system("cls");
-				//Choferes
+				//Choferes				
 				subMenuC();
 			break;
 			case '2':
@@ -274,6 +292,8 @@ void subMenuC(){
 		printf("1- Carga Choferes.\n");
 		printf("2- Chofer con mas Pasajeros.\n");
 		printf("0- Volver.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
@@ -286,10 +306,12 @@ void subMenuC(){
 				puts("\n\t\t\t\tVolviendo al Menu.");
 				printf("-------------------------------------------------------------------------------\n\n");
 			break;
+			
 			case '1':
-				system("cls");
-				//Carga Choferes
+				system("cls");			
+				altaChofer(); //Carga Choferes				
 			break;
+			
 			case '2':
 				system("cls");
 				//Chofer con mas Pasajeros
@@ -330,6 +352,8 @@ void subMenuT(){
 		printf("1- Carga de Transportes.\n");
 		printf("2- Porcentaje pasajeros primer turno anual.\n");
 		printf("0- Volver.\n");
+		
+		fflush(stdin);
 		scanf("%c", &op);
 		printf("\n");
 		fflush(stdin);
