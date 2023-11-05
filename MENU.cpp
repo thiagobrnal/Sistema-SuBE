@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "structs.h"
 #include "funciones.h"
@@ -160,6 +161,7 @@ void MenuSaldo(){
 			case '1':
 				system("cls");
 				//Cargar Saldo
+				cargaSaldo();
 			break;
 			case '2':
 				system("cls");
@@ -168,6 +170,7 @@ void MenuSaldo(){
 			case '3':
 				system("cls");
 				//Ver Movimientos
+				//listarCuentas();
 			break;
 			case '4':
 				system("cls");
