@@ -419,6 +419,7 @@ void cargaSaldo(){
 					
 					if(idAux==cuenta.id_usuario){
 						
+						tarjetaAux = cuenta.nroTarjeta;
 						montoAnt = cuenta.saldo;
 						monto += cuenta.saldo;
 						cuenta.saldo = monto;
@@ -460,7 +461,8 @@ void cargaSaldo(){
 							
 							sprintf(nroC,"%ld_ticket.txt", carga.nroControl);
 							if((aText=fopen(nroC,"w"))!=NULL){
-								fprintf(aText,"Nro Tarjeta: %ld\n", carga.nroControl);
+								fprintf(aText,"REMITO N° %ld\n",carga.nroControl);
+								fprintf(aText, "Nro Tarjeta: %ld\n", tarjetaAux);
 								fprintf(aText,"Saldo Anterior: %.2f\n", montoAnt);
 								fprintf(aText,"Saldo Actual: %.2f\n", monto);
 								fprintf(aText,"Fecha: %d/%d/%d\n", carga.tFecha.dia,carga.tFecha.mes,carga.tFecha.anio);
