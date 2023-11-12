@@ -11,6 +11,7 @@ void MenuSaldo();
 void MenuCT();
 void subMenuC();
 void subMenuT();
+void MenuMovimientos();
 
 main(){
 	
@@ -25,10 +26,11 @@ main(){
 		printf("\t\t\tMENU SISTEMA TRANSPORTE PUBLICO\n");
 		printf("-------------------------------------------------------------------------------\n");
 		
-		printf("1- Registro de Usuarios.\n");
-		printf("2- Carga y Consulta de Saldo.\n");
+		printf("1- Gestionar Usuarios.\n");
+		printf("2- Carga y Consultas de Saldo.\n");
 		printf("3- Uso de la tarjeta y/o billetera electronica.\n");
 		printf("4- Gestionar Medios de Transporte y Choferes.\n");
+		printf("5- Movimientos.\n");
 		printf("0- Salir.\n");
 		
 		fflush(stdin);
@@ -59,8 +61,12 @@ main(){
 				usoTarjetaoBV();
 			break;
 			case '4':
-				//Gestiona choferes
+				//Gestiona choferes y transportes
 				MenuCT();
+			break;
+			case '5':
+				//Ver menu Movimientos
+				MenuMovimientos();
 			break;
 			
 			default:
@@ -82,8 +88,8 @@ void MenuUsers(){
 		printf("\t\t\t\tMENU Usuarios\n");
 		printf("-------------------------------------------------------------------------------\n");
 		printf("1- Registro de Usuarios.\n");
-		printf("2- Lista de Usuarios\n");
-		printf("3- Modificar Usuarios.\n");
+		printf("2- Lista de Usuarios.\n");
+		printf("3- Cantidad de beneficiarios.\n");
 		printf("0- Volver.\n");
 		
 		fflush(stdin);
@@ -107,15 +113,18 @@ void MenuUsers(){
 			
 			case '2':
 				system("cls");
-				
 				listaUsuarios(); //Lista todos los usuarios
-				
 			break;
 			
 			case '3':
 				system("cls");
-				//Modificar Usuarios
+				//Mostrar cantidad de usuarios
 			break;
+			
+			/*case '4':
+				system("cls");
+				//Modificar usuarios
+			break;*/
 			
 			default:
 				system("cls");
@@ -139,9 +148,7 @@ void MenuSaldo(){
 		printf("-------------------------------------------------------------------------------\n");
 		printf("1- Cargar Saldo.\n");
 		printf("2- Consultar Saldo.\n");
-		printf("3- Ver Movimientos.\n");
-		printf("4- Listar Regargas.\n");
-		printf("5- Cantidad de Beneficiarios.\n");
+		printf("3- Listar Regargas.\n");
 		printf("0- Volver.\n");
 		
 		fflush(stdin);
@@ -170,18 +177,7 @@ void MenuSaldo(){
 			
 			case '3':
 				system("cls");
-				//Ver Movimientos
-				//listarCuentas();
-			break;
-			
-			case '4':
-				system("cls");
 				RecargasConDNI(); //Listar Regargas
-			break;
-			
-			case '5':
-				system("cls");
-				//Cantidad de Beneficiarios
 			break;
 			
 			default:
@@ -193,7 +189,6 @@ void MenuSaldo(){
 		
 	}
 }
-
 
 void MenuCT(){
 	
@@ -361,5 +356,54 @@ void subMenuT(){
 				puts("\n\t\t\tOpcion no valida, intente nuevo.");
 				printf("-------------------------------------------------------------------------------\n\n");
 		}	
+	}
+}
+
+void MenuMovimientos(){
+		char op;
+	int band = 1;
+	
+	while(band != 0){
+		
+		printf("\n-------------------------------------------------------------------------------\n");
+		printf("\t\t\tMENU Movimientos\n");
+		printf("-------------------------------------------------------------------------------\n");
+		printf("1- Ver Movimientos entre dos fechas.\n");
+		printf("2- Movimientos de un Usuario.\n");
+		printf("0- Volver.\n");
+		
+		fflush(stdin);
+		scanf("%c", &op);
+		printf("\n");
+		fflush(stdin);
+		
+		switch(op){
+			case '0':
+				band=0;
+				system("cls");
+				printf("\n-------------------------------------------------------------------------------");
+				puts("\n\t\t\t\tVolviendo al Menu.");
+				printf("-------------------------------------------------------------------------------\n\n");
+			break;
+			
+			case '1':
+				system("cls");
+				//Ver movimientos por fecha
+				verMovimientosEntreFechas();
+			break;
+			
+			case '2':
+				system("cls");
+				//Movimientos de un Usuario
+				verMovimientosDeUsuarios();
+			break;
+			
+			default:
+				system("cls");
+				printf("\n-------------------------------------------------------------------------------");
+				puts("\n\t\t\tOpcion no valida, intente nuevo.");
+				printf("-------------------------------------------------------------------------------\n\n");
+		}
+		
 	}
 }

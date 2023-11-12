@@ -15,6 +15,11 @@ int tipoUsos();
 void usoTarjetaoBV();
 float tarifaUbicacion(char, char);
 void RecargasConDNI();
+int fechaEstaEntre(struct fech, struct fech, struct fech);
+int compararFechas(struct fech, struct fech);
+void verMovimientosEntreFechas();
+void verMovimientosDeUsuarios();
+char elegirOD();
 
 //test
 void mostar_choferes();
@@ -377,7 +382,7 @@ void cargaSaldo(){
 	
 	FILE *arch, *arch1, *arch2, *aText;
 	int ultId=0, encontro=0, idAux, band = 0;
-	long nroControl = 9000;
+	long nroControl = 5000;
 	char bocaPago, nroC[30];;
 	long dniAux, tarjetaAux;
 	float monto, montoAnt, aux;
@@ -825,7 +830,7 @@ void usoTarjetaoBV(){
 	FILE *arch1, *arch2, *arch3, *arch4;
 	int ultId = 0, encontro = 0, idAux, tipo, numUnidadAux, encontro2 = 0;
 	long dniAux;
-	int origenInt = 0, destinoInt = 0, band1 = 0, band2 = 0, dia, hora, min, x;
+	int band1 = 0, band2 = 0, dia, hora, min, x;
 	char orig[25], dest[25], daux, oaux, beneficioAux[50];
 	float precio = 0, saldoAux;
 	
@@ -880,60 +885,26 @@ void usoTarjetaoBV(){
 					puts("La unidad ingresada no existe");
 				}
 				if(encontro2 == 1){
-					do{
-						printf("\nIngrese el origen del viaje");
-						printf("\n1- Posadas.\n2- Garupa.\n3-Candelaria.\n");
-						scanf("%d",&origenInt);
-						
-						if((origenInt == 1) || (origenInt == 2) || (origenInt == 3)){
-							band1 = 1;
-							switch(origenInt){
-								case 1:
-									strcpy(orig,"posadas");
-									oaux = 'p';
-								break;
-								case 2:
-									strcpy(orig,"garupa");
-									oaux = 'g';
-								break;
-								case 3:
-									strcpy(orig,"candelaria");
-									oaux = 'c';
-								break;
-							}
-						}else{
-							puts("Opcion no valida.");
-						}
-					}while(band1 != 1);
 					
-					band1 = 0;
+					printf("\nIngrese el origen del viaje");
+					oaux = elegirOD();
+					printf("\nIngrese el destino del viaje");
+					daux = elegirOD();
 					
-					do{
-						printf("\nIngrese el destino del viaje");
-						printf("\n1- Posadas.\n2- Garupa.\n3-Candelaria.\n");
-						scanf("%d",&destinoInt);
-						
-						//FALTA TESTEAR
-						if((destinoInt == 1) || (destinoInt == 2) || (destinoInt == 3)){
-							band1 = 1;
-							switch(destinoInt){
-								case 1:
-									strcpy(dest,"posadas");
-									daux = 'p';
-								break;
-								case 2:
-									strcpy(dest,"garupa");
-									daux = 'g';
-								break;
-								case 3:
-									strcpy(dest,"candelaria");
-									daux = 'c';
-								break;
-							}
-						}else{
-							puts("Opcion no valida.");
-						}
-					}while(band1 != 1);
+					if(oaux == 'p'){
+						strcpy(orig,"Posadas");
+					}else if(oaux == 'g'){
+						strcpy(orig,"Garupa");
+					}else if(oaux == 'c'){
+						strcpy(orig,"Candelaria");
+					}
+					if(daux == 'p'){
+						strcpy(dest,"Posadas");
+					}else if(daux == 'g'){
+						strcpy(dest,"Garupa");
+					}else if(daux == 'c'){
+						strcpy(dest,"Candelaria");
+					}
 					
 					dia = obtenerTiempo('x');
 					hora = obtenerTiempo('h');
@@ -1094,6 +1065,214 @@ void RecargasConDNI() {
 			}
 		}						
 	}		
+}
+
+void verMovimientosDeUsuarios(){
+	FILE *arch, *arch2;
+	int idAux, encontro = 0;
+	char nomAp[30];
+	
+	puts("Ingrese Nombre y Apellido de la persona a buscar: ");
+	gets(nomAp);
+	
+	arch2=fopen("usuarios.dat", "rb");
+	if(arch2==NULL){
+		printf("\nError al abrir el archivo usuarios.dat");
+	}else{
+		
+		fread(&usuario, sizeof(usuario),1,arch2);
+		while((!feof(arch2)) && (encontro == 0)){
+			
+			if(strcmp(nomAp,usuario.nomApe)==0){
+				idAux = usuario.id;
+				encontro = 1;	
+			}
+			if(encontro==0){
+				fread(&usuario, sizeof(usuario),1,arch2);
+			}
+		}
+		fclose(arch2);
+	}
+	
+	if(encontro==0){
+		puts("No se encontro al usuario ingresado.");
+	}else{
+		arch=fopen("movimientos.dat","rb");
+	if(arch==NULL){
+		printf("\nError al abrir el archivo movimientos.dat");
+	}
+	else{		
+		fread(&movimiento,sizeof(movimiento),1,arch);
+		while(!feof(arch)){
+			
+			if(movimiento.id_usuario == idAux){
+				printf("\nNro Unidad: %d", movimiento.nroUnidad);
+				printf("\nOrigen: ");
+				puts(movimiento.origen);
+				printf("Destino: ");
+				puts(movimiento.destino);
+				printf("DNI usuario: %ld", movimiento.dni_usuario);
+				if(movimiento.tipo == 1){
+					printf("\nTipo: SUBE");
+				}else{
+					printf("\nTipo: Billetera Virtual");
+				}
+				printf("\nSaldo Utilizado: %.2f", movimiento.saldoUtl);
+				printf("\nFecha: %d/%d/%d",	movimiento.tFecha.dia,movimiento.tFecha.mes,movimiento.tFecha.anio);
+				printf("\nHora: %d:%d",	movimiento.tHora.hora,movimiento.tHora.min);				
+				printf("\n----------------");		
+			}
+			
+				
+			fread(&movimiento,sizeof(movimiento),1,arch);
+		}
+	
+		fclose(arch);	
+	}
+	}
+	
+}
+
+void verMovimientosEntreFechas(){
+	struct fech fechaInicio, fechaFin;
+	int band = 0, c = 0;
+	char opcion;
+	do{
+		printf("\nIngrese la fecha de inicio con numeros.");
+		printf("\nDia:");
+		scanf("%d", &fechaInicio.dia);
+		printf("Mes:");
+		scanf("%d", &fechaInicio.mes);
+		printf("A%co:", 164);
+		scanf("%d", &fechaInicio.anio);
+		printf("\nIngrese la fecha de final con numeros.");
+		printf("\nDia:");
+		scanf("%d", &fechaFin.dia);
+		printf("Mes:");
+		scanf("%d", &fechaFin.mes);
+		printf("A%co:", 164);
+		scanf("%d", &fechaFin.anio);
+		
+		fflush(stdin);
+		
+		printf("\nFecha de Inicio: %d/%d/%d",fechaInicio.dia,fechaInicio.mes,fechaInicio.anio);
+		printf("\nFecha de Fin: %d/%d/%d",fechaFin.dia,fechaFin.mes,fechaFin.anio);
+		printf("\n----------------------");
+		printf("\nEsto es correcto? s/n");
+		printf("\n----------------------\n");
+		scanf("%c", &opcion);
+		fflush(stdin);
+		
+		if(opcion == 's'){
+			band= 1;
+		}
+	}while(band==0);
+	
+	
+	if((compararFechas(fechaInicio,fechaFin))>0){
+		puts("Las fechas no son validas.");
+	}else{
+		FILE *arch;
+	
+	arch=fopen("movimientos.dat","rb");
+	if(arch==NULL){
+		printf("\nError al abrir el archivo movimientos.dat");
+	}
+	else{		
+		fread(&movimiento,sizeof(movimiento),1,arch);
+		while(!feof(arch)){
+			
+			if(fechaEstaEntre(movimiento.tFecha,fechaInicio,fechaFin)){
+				printf("\nDNI usuario: %ld", movimiento.dni_usuario);
+				if(movimiento.tipo == 1){
+					printf("\nTipo: SUBE");
+				}else{
+					printf("\nTipo: Billetera Virtual");
+				}
+				printf("\nNro Unidad: %d", movimiento.nroUnidad);
+				printf("\nOrigen: ");
+				puts(movimiento.origen);
+				printf("Destino: ");
+				puts(movimiento.destino);
+				printf("Saldo Utilizado: %.2f", movimiento.saldoUtl);
+				printf("\nFecha: %d/%d/%d",	movimiento.tFecha.dia,movimiento.tFecha.mes,movimiento.tFecha.anio);
+				printf("\nHora: %d:%d",	movimiento.tHora.hora,movimiento.tHora.min);
+				
+				printf("\n----------------");
+				c++;	
+			}
+				
+			fread(&movimiento,sizeof(movimiento),1,arch);
+		}
+	
+		fclose(arch);
+		
+		if(c==0){
+			puts("No hay registros entre esas fechas.");
+		}	
+	}
+	}
+	
+}
+
+char elegirOD(){
+	char op;
+	int band = 1;
+	
+	while(band == 1){
+		
+		printf("\n1- Posadas.\n2- Garupa.\n3- Candelaria.\n");
+		fflush(stdin);
+		scanf("%c", &op);
+		printf("\n");
+		fflush(stdin);
+		
+		switch(op){
+			
+			case '1':
+				return 'p';
+			break;
+			
+			case '2':
+				return 'g';
+			break;
+			
+			case '3':
+				return 'c';
+			break;
+			
+			default:
+				puts("Opcion no valida, intente nuevo.");
+		}
+		
+	}
+}
+// Función para comparar dos fechas
+// Devuelve 0 si son iguales, -1 si fecha1 es anterior a fecha2 y 1 si fecha1 es posterior a fecha2
+int compararFechas(struct fech fechaInicio, struct fech fechaFin) {
+    if (fechaInicio.anio < fechaFin.anio) {
+        return -1;
+    } else if (fechaInicio.anio > fechaFin.anio) {
+        return 1;
+    } else {
+        if (fechaInicio.mes < fechaFin.mes) {
+            return -1;
+        } else if (fechaInicio.mes > fechaFin.mes) {
+            return 1;
+        } else {
+            if (fechaInicio.dia < fechaFin.dia) {
+                return -1;
+            } else if (fechaInicio.dia > fechaFin.dia) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+}
+
+int fechaEstaEntre(struct fech fechaBuscar, struct fech fechaInicio, struct fech fechaFin) {
+    return (compararFechas(fechaBuscar, fechaInicio) >= 0 && compararFechas(fechaBuscar, fechaFin) <= 0);
 }
 
 //funciones de testeo:
