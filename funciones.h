@@ -11,6 +11,11 @@ void bocaP(char x);
 void altaUnidad();
 void asignaciones(int, int);
 
+//test
+void mostar_choferes();
+void mostrar_unidades();
+void mostrar_asignaciones();
+
 void altaUsuario() {
 	FILE *arch1, *arch2;
 	int ultId=0, ultId2=0, idaux;
@@ -734,5 +739,129 @@ void asignaciones(int idUnidad, int nUni){
 						
 	}
 }
+
+
+//funciones de testeo:
+
+void mostar_choferes() {
+	
+	FILE *arch;
+	
+	arch=fopen("choferes.dat","rb");
+	if(arch==NULL){
+		printf("\nError al crear el archivo clase.bin");
+		return 0;
+	}
+	else{
+		fread(&chofer, sizeof(chofer),1,arch);
+		
+		while(!feof(arch)){
+
+			printf("\nID: %d",chofer.id);
+			printf("\nDNI: %ld", chofer.dni);
+			printf("\nNombre: ");
+			puts(chofer.nomApe);
+			printf("fecha nacimiento: ");
+			printf("%d/", chofer.nacimiento.dia);
+			printf("%d/", chofer.nacimiento.mes);
+			printf("%d/", chofer.nacimiento.anio);
+			printf("\ndireccion: ");
+			puts(chofer.direccion);
+			printf("telefono: %ld",chofer.telefono);
+			printf("\ncorreo: ");
+			puts(chofer.correo);
+			printf("\n----------------");	
+				
+				
+			fread(&chofer, sizeof(chofer),1,arch);
+		}
+	
+		fclose(arch);	
+	}
+			
+	
+		
+	
+}
+
+void mostrar_unidades() {
+	
+	FILE *arch;
+	
+	arch=fopen("unidades.dat","rb");
+	if(arch==NULL){
+		printf("\nError al crear el archivo clase.bin");
+		return 0;
+	}
+	else{		
+		fread(&unidad, sizeof(unidad),1,arch);
+		while(!feof(arch)){
+
+			printf("\nID: %d",unidad.id);
+			printf("\nnumero unidad: %d", unidad.numUnidad);
+			printf("\nMarca: ");
+			puts(unidad.marca);
+			printf("\nModelo: ");
+			puts(unidad.modelo);
+			printf("\nasientos: %d", unidad.canAsientos);
+			printf("\nkm: %d", unidad.km);									
+			printf("fecha alta: ");
+			printf("%d/", unidad.alta.dia);
+			printf("%d/", unidad.alta.mes);
+			printf("%d\n", unidad.alta.anio);
+			puts(unidad.discapacitados);
+								
+			printf("\n----------------");	
+				
+				
+			fread(&unidad, sizeof(unidad),1,arch);
+		}
+	
+		fclose(arch);	
+	}
+			
+	
+		
+	
+}
+
+void mostrar_asignaciones() {
+	
+	FILE *arch;
+	
+	arch=fopen("asignaciones.dat","rb");
+	if(arch==NULL){
+		printf("\nError al crear el archivo clase.bin");
+		return 0;
+	}
+	else{		
+		fread(&asignacion, sizeof(asignacion),1,arch);
+		while(!feof(arch)){
+
+			printf("\nID: %d",asignacion.id);			
+			printf("\nID unidad: %d",asignacion.id_unidad);			
+			printf("\nID chofer: %d",asignacion.id_chofer);
+			printf("\nDNI chofer: %ld",asignacion.dni_chofer);
+			
+			if (asignacion.turno == 1) {
+				printf("\nTurno 1: 00:00hs a 11:59");
+			}
+			else {
+				printf("\nTurno 2: 12:00 a 23:59hs");				
+			}									
+			printf("\n----------------");	
+				
+				
+			fread(&asignacion, sizeof(asignacion),1,arch);
+		}
+	
+		fclose(arch);	
+	}
+			
+	
+		
+	
+}
+
 
 
