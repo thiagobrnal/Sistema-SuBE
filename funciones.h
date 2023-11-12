@@ -19,6 +19,7 @@ float tarifaUbicacion(char, char);
 void mostar_choferes();
 void mostrar_unidades();
 void mostrar_asignaciones();
+void mostrar_movimientos();
 
 void altaUsuario() {
 	FILE *arch1, *arch2;
@@ -1136,4 +1137,41 @@ void mostrar_asignaciones() {
 	
 }
 
-
+void mostrar_movimientos(){
+		FILE *arch;
+	
+	arch=fopen("movimientos.dat","rb");
+	if(arch==NULL){
+		printf("\nError al abrir el archivo movimientos.dat");
+	}
+	else{		
+		fread(&movimiento,sizeof(movimiento),1,arch);
+		while(!feof(arch)){
+			
+			printf("\nID: %d",movimiento.id);
+			printf("\nID usuario: %d", movimiento.id_usuario);
+			printf("\nDNI usuario: %ld", movimiento.dni_usuario);
+			if(movimiento.tipo == 1){
+				printf("\nTipo: SUBE");
+			}else{
+				printf("\nTipo: Billetera Virtual");
+			}
+			printf("\nNro Unidad: %d", movimiento.nroUnidad);
+			printf("\nOrigen: ");
+			puts(movimiento.origen);
+			printf("Destino: ");
+			puts(movimiento.destino);
+			printf("Saldo Utilizado: %.2f", movimiento.saldoUtl);
+			printf("\nFecha: %d/%d/%d",	movimiento.tFecha.dia,movimiento.tFecha.mes,movimiento.tFecha.anio);
+			printf("\nHora: %d:%d",	movimiento.tHora.hora,movimiento.tHora.min);
+			
+								
+			printf("\n----------------");	
+				
+				
+			fread(&movimiento,sizeof(movimiento),1,arch);
+		}
+	
+		fclose(arch);	
+	}
+}

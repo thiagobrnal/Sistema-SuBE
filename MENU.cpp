@@ -171,7 +171,7 @@ void MenuSaldo(){
 			case '3':
 				system("cls");
 				//Ver Movimientos
-				listarCuentas();
+				//listarCuentas();
 			break;
 			
 			case '4':
