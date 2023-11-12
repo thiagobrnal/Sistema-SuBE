@@ -14,6 +14,7 @@ void asignaciones(int, int);
 int tipoUsos();
 void usoTarjetaoBV();
 float tarifaUbicacion(char, char);
+void RecargasConDNI();
 
 //test
 void mostar_choferes();
@@ -318,7 +319,6 @@ void listaUsuarios() {
 			
 }
 
-
 int obtenerTiempo(char mensajero){
 	
 	int hours, minutes, seconds, day, month, year,dia;
@@ -380,7 +380,7 @@ void cargaSaldo(){
 	long nroControl = 9000;
 	char bocaPago, nroC[30];;
 	long dniAux, tarjetaAux;
-	float monto, montoAnt;
+	float monto, montoAnt, aux;
 	
 	
 	puts("Ingrese su DNI: ");
@@ -440,6 +440,7 @@ void cargaSaldo(){
 						
 						tarjetaAux = cuenta.nroTarjeta;
 						montoAnt = cuenta.saldo;
+						aux = monto;
 						monto += cuenta.saldo;
 						cuenta.saldo = monto;
 						fseek(arch1,sizeof(cuenta)*(-1),SEEK_CUR);
@@ -469,7 +470,8 @@ void cargaSaldo(){
 							carga.id_usuario = idAux;
 							carga.dni_usuario = dniAux;
 							carga.nroControl = nroControl + 1;
-							bocaP(bocaPago);
+							carga.monto = aux;
+							bocaP(bocaPago);							
 							carga.tFecha.dia = obtenerTiempo('d');
 							carga.tFecha.mes = obtenerTiempo('m');
 							carga.tFecha.anio = obtenerTiempo('a');
@@ -1018,6 +1020,82 @@ void usoTarjetaoBV(){
 	}
 	
 }
+
+void RecargasConDNI() {
+	
+	FILE *arch1, *arch2;
+	int ultId, idAux,encontro1=0, encontro2=0;
+	long dniAux, telAux;
+	
+	printf("Ingrese su DNI y numero de telefono. ");
+	printf("\nDNI: ");
+	scanf("%ld", &dniAux);
+	fflush(stdin);
+	
+	printf("\nTelefono: ");
+	scanf("%ld", &telAux);
+	fflush(stdin);
+			
+	arch1 = fopen("usuarios.dat","r+b");
+	if(arch1==NULL){
+		printf("Error de apertura de archivo usuarios.dat");
+		printf("\n");
+	}else{		
+			
+		fread(&usuario, sizeof(usuario),1,arch1);
+		
+		while((!feof(arch1))&&(encontro1 == 0)){
+
+			if((dniAux == usuario.dni)&& (telAux==usuario.telefono)){
+				encontro1=1;
+				idAux = usuario.id;
+			}else{
+				fread(&usuario, sizeof(usuario),1,arch1);
+			}
+		}
+		fclose(arch1);
+		
+		if(encontro1==0){
+			printf("\nNo se encuentra el usuario registrado");
+		}else if(encontro1==1){
+					
+			arch2 = fopen("cargas.dat","r+b");
+			if(arch2==NULL){
+				printf("Error de apertura de archivo cargas.dat");
+				printf("\n");
+			}else{
+				fread(&carga,sizeof(carga),1,arch2);
+				
+				while(!feof(arch2)){			
+					
+					if(idAux==carga.id_usuario){
+						encontro2=1;
+						
+						printf("\n\nDNI usuario: %ld",carga.dni_usuario);
+						printf("\nNumero de control: %ld",carga.nroControl);
+						printf("\nMonto: %.2f",carga.monto);
+						printf("\nBoca de pago: ");
+						puts(carga.bocaPago);
+						printf("Fecha y hora de pago: ");
+						printf("\n%d/", carga.tFecha.dia);
+						printf("%d/", carga.tFecha.mes);
+						printf("%d", carga.tFecha.anio);
+						printf(" - %d:%d hs.", carga.tHora.hora, carga.tHora.min);
+																														
+					}	
+					fread(&carga,sizeof(carga),1,arch2);		
+				}
+				
+					fclose(arch2);
+					
+					if(encontro2==0){
+						printf("\nNo se encuentran regargas de este usuario");
+					}
+			}
+		}						
+	}		
+}
+
 //funciones de testeo:
 
 void mostar_choferes() {

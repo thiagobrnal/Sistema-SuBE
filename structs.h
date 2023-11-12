@@ -45,6 +45,7 @@ struct datCargas{
 	char bocaPago[40];
 	struct fech tFecha;
 	struct hora tHora;
+	float monto;
 }carga;
 
 struct datMovimientos{

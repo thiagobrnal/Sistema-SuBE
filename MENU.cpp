@@ -176,7 +176,7 @@ void MenuSaldo(){
 			
 			case '4':
 				system("cls");
-				//Listar Regargas
+				RecargasConDNI(); //Listar Regargas
 			break;
 			
 			case '5':
