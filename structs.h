@@ -46,3 +46,12 @@ struct datCargas{
 	struct fech tFecha;
 	struct hora tHora;
 }carga;
+
+struct datMovimientos{
+	int id, id_usuario, nroUnidad, tipo;
+	char origen[25], destino[25];
+	long dni_usuario;
+	float saldoUtl;
+	struct fech tFecha;
+	struct hora tHora;
+}movimiento;

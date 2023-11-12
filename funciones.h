@@ -3,6 +3,7 @@
 
 void altaUsuario();
 void beneficios();
+void listarCuentas();
 void altaChofer();
 void listaUsuarios();
 int obtenerTiempo(char);
@@ -10,6 +11,9 @@ void cargaSaldo();
 void bocaP(char x);
 void altaUnidad();
 void asignaciones(int, int);
+int tipoUsos();
+void usoTarjetaoBV();
+float tarifaUbicacion(char, char);
 
 //test
 void mostar_choferes();
@@ -316,7 +320,7 @@ void listaUsuarios() {
 
 int obtenerTiempo(char mensajero){
 	
-	int hours, minutes, seconds, day, month, year;
+	int hours, minutes, seconds, day, month, year,dia;
  
     // `time_t` es un tipo de tiempo aritmético
     time_t now;
@@ -338,6 +342,8 @@ int obtenerTiempo(char mensajero){
     month = local->tm_mon + 1;      // obtener el mes del año (0 a 11)
     year = local->tm_year + 1900;   // obtener el año desde 1900
     
+    dia = local->tm_wday;
+    
     //HORA
     if(mensajero == 'h'){
     	return hours;
@@ -358,6 +364,11 @@ int obtenerTiempo(char mensajero){
 	if(mensajero == 'a'){
 		return year;
 	}
+	//QUE DIA ES COMO ENTERO del 0 al 6
+	if(mensajero == 'x'){
+		return dia;
+	}
+	
 	
 }
 
@@ -740,7 +751,272 @@ void asignaciones(int idUnidad, int nUni){
 	}
 }
 
+int tipoUsos(){
+	
+	int op = 0;
+	int band = 0;
+	
+	do{
+		
+		printf("\nEliga con que va a pagar el viaje:\n");
+		printf("1- SUBE.\n");
+		printf("2- Billetera electronica.\n");
+		
+		fflush(stdin);
+		scanf("%d", &op);
+		fflush(stdin);
+		
+		if((op == 1) || (op == 2)){
+			band = 1;
+		}else{
+			system("cls");
+			printf("\n-------------------------------------------------------------------------------");
+			puts("\n\t\t\tOpcion no valida, intente nuevo.");
+			printf("-------------------------------------------------------------------------------\n\n");
+		}
 
+	}while(band != 1);
+	return op;
+}
+
+float tarifaUbicacion(char origen, char destino){
+	
+	float precio = 0;
+	
+	if(origen == 'p'){
+		if(destino == 'p'){
+			precio = 130.00;
+		}else if(destino == 'g'){
+			precio = 169.00;
+		}else if(destino == 'c'){
+			precio = 197.60;
+		}	
+	}
+
+	if(origen == 'g'){
+		if(destino == 'p'){
+			precio = 169.00;
+		}else if(destino == 'g'){
+			precio = 139.28;
+		}else if(destino == 'c'){
+			precio = 220.60;
+		}	
+	}	
+	
+	if(origen == 'c'){
+		if(destino == 'p'){
+			precio = 197.60;
+		}else if(destino == 'g'){
+			precio = 220.00;
+		}else if(destino == 'c'){
+			precio = 139.28;
+		}	
+	}
+		
+	return precio;
+
+}
+
+void usoTarjetaoBV(){
+	
+	FILE *arch1, *arch2, *arch3, *arch4;
+	int ultId = 0, encontro = 0, idAux, tipo, numUnidadAux, encontro2 = 0;
+	long dniAux;
+	int origenInt = 0, destinoInt = 0, band1 = 0, band2 = 0, dia, hora, min, x;
+	char orig[25], dest[25], daux, oaux, beneficioAux[50];
+	float precio = 0, saldoAux;
+	
+	printf("\nIngrese su DNI:");
+	scanf("%ld", &dniAux);
+	fflush(stdin);
+	
+	arch1 = fopen("usuarios.dat","a+b");
+	if(arch1 == NULL){
+		puts("No se pudo abrir el archivo usuarios.dat");
+	}else{
+		
+		fread(&usuario, sizeof(usuario),1,arch1);
+		while((!feof(arch1))&&(encontro == 0)){
+			if(dniAux == usuario.dni){
+				encontro = 1;
+				idAux = usuario.id;
+				strcpy(beneficioAux,usuario.tipo); //BENEFICIO
+			}
+			if(encontro == 0){
+				fread(&usuario, sizeof(usuario),1,arch1);	
+			}
+		}
+		fclose(arch1);
+		
+		if(encontro == 0){
+			puts("El usuario no existe en la bd");
+		}else if(encontro == 1){
+			tipo = tipoUsos();
+			printf("Ingrese el Nro del colectivo:");
+			scanf("%d", &numUnidadAux);
+			
+			arch4 = fopen("unidades.dat","a+b");
+			if(arch4 == NULL){
+				puts("No se pudo abrir el archivo unidades.dat");
+			}else{
+				rewind(arch4);
+				fread(&unidad, sizeof(unidad),1,arch4);
+				while((!feof(arch4))&&(encontro2 == 0)){
+					
+					if(numUnidadAux == unidad.numUnidad){
+						encontro2 = 1;
+					}
+					
+					if(encontro2 == 0){
+						fread(&unidad, sizeof(unidad),1,arch4);
+					}
+				}
+				fclose(arch4);
+				
+				if(encontro2 == 0){
+					puts("La unidad ingresada no existe");
+				}
+				if(encontro2 == 1){
+					do{
+						printf("\nIngrese el origen del viaje");
+						printf("\n1- Posadas.\n2- Garupa.\n3-Candelaria.\n");
+						scanf("%d",&origenInt);
+						
+						if((origenInt == 1) || (origenInt == 2) || (origenInt == 3)){
+							band1 = 1;
+							switch(origenInt){
+								case 1:
+									strcpy(orig,"posadas");
+									oaux = 'p';
+								break;
+								case 2:
+									strcpy(orig,"garupa");
+									oaux = 'g';
+								break;
+								case 3:
+									strcpy(orig,"candelaria");
+									oaux = 'c';
+								break;
+							}
+						}else{
+							puts("Opcion no valida.");
+						}
+					}while(band1 != 1);
+					
+					band1 = 0;
+					
+					do{
+						printf("\nIngrese el destino del viaje");
+						printf("\n1- Posadas.\n2- Garupa.\n3-Candelaria.\n");
+						scanf("%d",&destinoInt);
+						
+						//FALTA TESTEAR
+						if((destinoInt == 1) || (destinoInt == 2) || (destinoInt == 3)){
+							band1 = 1;
+							switch(destinoInt){
+								case 1:
+									strcpy(dest,"posadas");
+									daux = 'p';
+								break;
+								case 2:
+									strcpy(dest,"garupa");
+									daux = 'g';
+								break;
+								case 3:
+									strcpy(dest,"candelaria");
+									daux = 'c';
+								break;
+							}
+						}else{
+							puts("Opcion no valida.");
+						}
+					}while(band1 != 1);
+					
+					dia = obtenerTiempo('x');
+					hora = obtenerTiempo('h');
+					min = obtenerTiempo('s');
+						
+					if(hora >=5 && (hora<=21 && min < 59)){
+						precio = 0.00;	
+					}	
+						
+					if((x == 0) || (x == 1) || (strcmp(beneficioAux,"normal")==0)){
+						precio = tarifaUbicacion(oaux,daux);				
+					}
+					
+					
+					
+					arch2 = fopen("cuentas.dat","r+b");
+					if(arch2 == NULL){
+						puts("No se pudo abrir el archivo cuentas.dat");
+					}else{
+							fread(&cuenta,sizeof(cuenta),1,arch2);
+							while((!feof(arch2))&&(band2 == 0)){
+								if(idAux == cuenta.id_usuario){
+									saldoAux = cuenta.saldo; 
+									band2 = 1;
+								}
+								if(band2 == 0){
+									fread(&cuenta,sizeof(cuenta),1,arch2);
+								}
+								
+							}
+							if(band2 == 1){
+								if(saldoAux<precio){
+									puts("No posee saldo para este viaje");
+									printf("\nSaldo: %.2f",saldoAux);
+								}else{
+									saldoAux = saldoAux - precio;
+									cuenta.saldo = saldoAux;
+									fseek(arch2,sizeof(cuenta)*(-1),SEEK_CUR);
+									fwrite(&cuenta,sizeof(cuenta),1,arch2);
+									
+									arch3 = fopen("movimientos.dat", "a+b");
+									if(arch3 == NULL){
+										puts("No se pudo abrir el archivo movimientos.dat");
+									}else{
+										fread(&movimiento,sizeof(movimiento),1,arch3);
+									while(!feof(arch3)){
+										ultId = movimiento.id;
+										fread(&movimiento,sizeof(movimiento),1,arch3);
+									}
+									
+									
+								
+									movimiento.id = ultId + 1;
+									movimiento.id_usuario = idAux;
+									movimiento.dni_usuario = dniAux;
+									movimiento.tipo = tipo;
+									movimiento.nroUnidad = numUnidadAux;
+									strcpy(movimiento.origen,orig);
+									strcpy(movimiento.destino,dest);
+									movimiento.saldoUtl = precio;
+									movimiento.tFecha.dia = obtenerTiempo('d');
+									movimiento.tFecha.mes = obtenerTiempo('m');
+									movimiento.tFecha.anio = obtenerTiempo('a');
+									movimiento.tHora.hora = obtenerTiempo('h');
+									movimiento.tHora.min = obtenerTiempo('s');
+									fwrite(&movimiento,sizeof(movimiento),1,arch3);
+									fclose(arch3);
+									
+									printf("\nCobro: %.2f", precio);
+									printf("\nSaldo Act: %.2f",saldoAux);
+									
+									}
+								}
+							}
+							fclose(arch2);
+
+					}
+					
+				}
+			}
+		}
+
+		
+	}
+	
+}
 //funciones de testeo:
 
 void mostar_choferes() {
@@ -750,7 +1026,6 @@ void mostar_choferes() {
 	arch=fopen("choferes.dat","rb");
 	if(arch==NULL){
 		printf("\nError al crear el archivo clase.bin");
-		return 0;
 	}
 	else{
 		fread(&chofer, sizeof(chofer),1,arch);
@@ -791,7 +1066,6 @@ void mostrar_unidades() {
 	arch=fopen("unidades.dat","rb");
 	if(arch==NULL){
 		printf("\nError al crear el archivo clase.bin");
-		return 0;
 	}
 	else{		
 		fread(&unidad, sizeof(unidad),1,arch);
@@ -832,7 +1106,6 @@ void mostrar_asignaciones() {
 	arch=fopen("asignaciones.dat","rb");
 	if(arch==NULL){
 		printf("\nError al crear el archivo clase.bin");
-		return 0;
 	}
 	else{		
 		fread(&asignacion, sizeof(asignacion),1,arch);
@@ -862,6 +1135,5 @@ void mostrar_asignaciones() {
 		
 	
 }
-
 
 

@@ -8,7 +8,6 @@
 
 void MenuUsers();
 void MenuSaldo();
-void MenuUsos();
 void MenuCT();
 void subMenuC();
 void subMenuT();
@@ -57,7 +56,7 @@ main(){
 			break;
 			case '3':
 				//Usa SUBE
-				MenuUsos();
+				usoTarjetaoBV();
 			break;
 			case '4':
 				//Gestiona choferes
@@ -172,7 +171,7 @@ void MenuSaldo(){
 			case '3':
 				system("cls");
 				//Ver Movimientos
-				//listarCuentas();
+				listarCuentas();
 			break;
 			
 			case '4':
@@ -195,53 +194,6 @@ void MenuSaldo(){
 	}
 }
 
-void MenuUsos(){
-	
-	char op;
-	int band = 1;
-	
-	while(band != 0){
-		
-		printf("\n-------------------------------------------------------------------------------\n");
-		printf("\t\t\t\tMENU USO\n");
-		printf("-------------------------------------------------------------------------------\n");
-		printf("1- SUBE.\n");
-		printf("2- Billetera electronica.\n");
-		printf("0- Volver.\n");
-		
-		fflush(stdin);
-		scanf("%c", &op);
-		printf("\n");
-		fflush(stdin);
-		
-		switch(op){
-			case '0':
-				band=0;
-				system("cls");
-				printf("\n-------------------------------------------------------------------------------");
-				puts("\n\t\t\t\tVolviendo al Menu.");
-				printf("-------------------------------------------------------------------------------\n\n");
-			break;
-			
-			case '1':
-				system("cls");
-				//SUBE
-			break;
-			
-			case '2':
-				system("cls");
-				//Billetera electronica
-			break;
-			
-			default:
-				system("cls");
-				printf("\n-------------------------------------------------------------------------------");
-				puts("\n\t\t\tOpcion no valida, intente nuevo.");
-				printf("-------------------------------------------------------------------------------\n\n");
-		}
-		
-	}
-}
 
 void MenuCT(){
 	
