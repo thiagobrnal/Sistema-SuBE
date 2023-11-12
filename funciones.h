@@ -8,6 +8,8 @@ void listaUsuarios();
 int obtenerTiempo(char);
 void cargaSaldo();
 void bocaP(char x);
+void altaUnidad();
+void asignaciones(int, int);
 
 void altaUsuario() {
 	FILE *arch1, *arch2;
@@ -238,10 +240,10 @@ void altaChofer() {
 		scanf("%d", &chofer.nacimiento.dia);
 		fflush(stdin);
 		printf("mes:\n");
-		scanf("%d", &chofer.nacimiento.anio);
+		scanf("%d", &chofer.nacimiento.mes);
 		fflush(stdin);
 		printf("anio:\n");
-		scanf("%d", &chofer.nacimiento.dia);
+		scanf("%d", &chofer.nacimiento.anio);
 		fflush(stdin);
 		printf("Ingrese su direccion.\n");
 		gets(chofer.direccion);
@@ -504,3 +506,233 @@ void bocaP(char x){
 	}
 	
 }
+
+void altaUnidad() {
+	FILE *arch;
+	int ultId=0, opc=0, numU=0, encontro=0, idAux=0, opCorrecta=0;
+	
+	fflush(stdin);
+	printf("Ingrese numero de unidad: ");
+	scanf("%d", &numU);
+	fflush(stdin);
+	
+	arch=fopen("unidades.dat","a+b");
+	if(arch==NULL){
+		printf("\nError al abrir el archivo unidades.dat");
+	}
+	else{
+		
+		fread(&unidad,sizeof(unidad),1,arch);
+	
+		while((!feof(arch))&&(encontro==0)){
+			
+			if(numU==unidad.numUnidad) {
+				encontro=1;							
+			}
+			if (encontro==0){
+			fread(&unidad,sizeof(unidad),1,arch);
+			}					
+		}
+				
+			if(encontro==1){
+				fseek(arch,sizeof(unidad)*(-1),SEEK_CUR);
+
+				idAux = unidad.id;
+				fclose(arch);
+			}									
+			else{
+				rewind(arch);
+				while(!feof(arch)){
+				ultId = unidad.id;
+				fread(&unidad, sizeof(unidad),1,arch);
+				}
+				unidad.id = ultId + 1;
+				idAux=unidad.id;
+				
+				unidad.numUnidad=numU;
+				fflush(stdin);				
+				printf("\nIngrese la marca: ");
+				gets(unidad.marca);
+				fflush(stdin);
+				printf("\nIngrese el modelo: ");
+				gets(unidad.modelo);
+				fflush(stdin);
+				printf("\nIngrese la cantidad de asientos: ");
+				scanf("%d", &unidad.canAsientos);
+				fflush(stdin);
+				printf("\nIngrese el kilometraje: ");
+				scanf("%d", &unidad.km);
+				fflush(stdin);
+				unidad.alta.dia = obtenerTiempo('d');
+				unidad.alta.mes = obtenerTiempo('m');
+				unidad.alta.anio = obtenerTiempo('a');				
+				printf("\nApto para pasajeros discapacitados?, ingrese 1 para si, 2 para no: ");
+				scanf("%d", &opc);
+				fflush(stdin);
+				
+				if((opc!=1) && (opc!=2)) {
+					while(opCorrecta==0) {
+						printf("\nOpcion incorrecta, intente de nuevo: ");
+						scanf("%d", &opc);
+						fflush(stdin);
+						
+						if((opc==1) || opc==2){
+							opCorrecta=1;
+						}																
+					}
+				}
+				
+				if(opc==1){
+					strcpy(unidad.discapacitados, "Apto");
+				}else if(opc==2){
+					strcpy(unidad.discapacitados, "No apto");
+				}
+						
+				fwrite(&unidad,sizeof(unidad),1,arch);
+				fclose(arch);				
+								
+			}
+			
+			asignaciones(idAux, numU);	
+	}
+		
+}
+
+void asignaciones(int idUnidad, int nUni){
+	
+	FILE *arch1, *arch2;
+	int c=0, encontro1=0, encontro2=0, ultId2=0, turnoAux=0, idAuxChofer=0;
+	int opCorrecta2=0, opc2=0, encontro3=0;
+	long dniAux=0, telAux=0;
+	
+	arch1=fopen("asignaciones.dat","a+b");
+	if(arch1==NULL){
+		printf("\nError al abrir el archivo unidades.dat");
+	}
+	else{
+		rewind(arch1);
+		fread(&asignacion,sizeof(asignacion),1,arch1);
+		
+		while((!feof(arch1)) && (encontro1==0)){			
+			if(idUnidad==asignacion.id_unidad) {
+				c++;
+				turnoAux=asignacion.turno;
+			}
+			if (encontro1==0){
+			fread(&asignacion,sizeof(asignacion),1,arch1);
+			}	
+		}	
+		
+		if(c==2){
+			printf("\nLa linea %d ya tiene 2 turnos cargados", nUni);
+			
+		}
+		else if((c==0) || (c==1)){
+			printf("\nIngrese el DNI del chofer a asignar: ");
+			scanf("%ld", &dniAux);
+			fflush(stdin);
+			
+			printf("\nIngrese su numero de telefono: ");
+			scanf("%ld", &telAux);
+			fflush(stdin);
+						
+			arch2=fopen("choferes.dat","a+b");
+			if(arch2==NULL){
+				printf("\nError al abrir el archivo choferes.dat");
+			}
+			else{
+				fread(&chofer,sizeof(chofer),1,arch2);
+	
+				while((!feof(arch2))&&(encontro2==0)){
+												
+					if((dniAux==chofer.dni) && (telAux==chofer.telefono)) {
+						encontro2=1;
+						idAuxChofer=chofer.id;					
+					}
+					if (encontro2==0){
+					fread(&chofer,sizeof(chofer),1,arch2);
+					}			
+				}
+				
+				fclose(arch2);
+				
+				if(encontro2==0){
+					printf("\nEl DNI ingresado no se encuentra en la base de datos");
+					fclose(arch2);						
+				}
+				else{										
+					rewind(arch1);
+					fread(&asignacion, sizeof(asignacion),1,arch1);	
+									
+					while((!feof(arch1))&&(encontro3==0)){
+						if(idAuxChofer==asignacion.id_chofer){
+							encontro3=1;											
+						}
+						if (encontro3==0){
+						fread(&asignacion,sizeof(asignacion),1,arch1);
+						}
+					}
+			
+					if(encontro3==1){
+						printf("\nEste chofer ya tiene asignado un turno");				
+					}
+					else{
+						rewind(arch1);
+						fread(&asignacion, sizeof(asignacion),1,arch1);
+						while(!feof(arch1)){
+						ultId2 = asignacion.id;
+						fread(&asignacion, sizeof(asignacion),1,arch1);
+						}
+						
+						asignacion.id = ultId2 + 1;
+						asignacion.id_unidad = idUnidad;
+						asignacion.id_chofer = idAuxChofer;
+						asignacion.dni_chofer = dniAux;
+							
+						if(c==1){							
+							if(turnoAux==1){
+								asignacion.turno=2;	
+								printf("Turno 2 asignado con exito");
+							}
+							else if(turnoAux==2){
+								asignacion.turno=1;
+								printf("Turno 1 asignado con exito");	
+								
+							}							
+						}
+						else if(c==0) {
+							printf("\nIngrese 1 o 2 segun el turno que desea asignar");
+							printf("\nTurno 1: 00:00hs a 11:59 o Turno 2: 12:00 a 23:59hs: ");
+							scanf("%d", &opc2);
+							fflush(stdin);
+							
+							if((opc2!=1) && (opc2!=2)) {
+								while(opCorrecta2==0) {
+									printf("\nOpcion incorrecta, intente de nuevo: ");
+									scanf("%d", &opc2);
+									fflush(stdin);
+						
+									if((opc2==1) || (opc2==2)){
+										asignacion.turno=opc2;									
+										printf("\nTurno %d asignado correctamente", opc2);
+										opCorrecta2=1;
+									}																
+								}
+							}
+							else {
+								asignacion.turno=opc2;
+								printf("\nTurno %d asignado correctamente", opc2);
+							}							
+						}
+					}																															
+				}		
+			}			
+		}
+				
+		fwrite(&asignacion,sizeof(asignacion),1,arch1);
+		fclose(arch1);
+						
+	}
+}
+
+

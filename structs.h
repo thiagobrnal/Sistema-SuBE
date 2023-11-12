@@ -29,8 +29,15 @@ struct datChoferes {
 }chofer;
 
 struct datTransporte{
-	int id, numUnidad;
-}colectivo;
+	int id, numUnidad, canAsientos, km;
+	char marca[20], modelo[20], discapacitados[20];
+	struct fech alta; 
+}unidad;
+
+struct datAsignaciones{
+	int id, id_unidad, id_chofer, turno;
+	long dni_chofer;
+}asignacion;
 
 struct datCargas{
 	int id, id_usuario;

@@ -158,28 +158,33 @@ void MenuSaldo(){
 				puts("\n\t\t\t\tVolviendo al Menu.");
 				printf("-------------------------------------------------------------------------------\n\n");
 			break;
+			
 			case '1':
-				system("cls");
-				//Cargar Saldo
-				cargaSaldo();
+				system("cls");								
+				cargaSaldo(); //Cargar Saldo				
 			break;
+			
 			case '2':
 				system("cls");
 				//Consultar Saldo
 			break;
+			
 			case '3':
 				system("cls");
 				//Ver Movimientos
 				//listarCuentas();
 			break;
+			
 			case '4':
 				system("cls");
 				//Listar Regargas
 			break;
+			
 			case '5':
 				system("cls");
 				//Cantidad de Beneficiarios
 			break;
+			
 			default:
 				system("cls");
 				printf("\n-------------------------------------------------------------------------------");
@@ -217,14 +222,17 @@ void MenuUsos(){
 				puts("\n\t\t\t\tVolviendo al Menu.");
 				printf("-------------------------------------------------------------------------------\n\n");
 			break;
+			
 			case '1':
 				system("cls");
 				//SUBE
 			break;
+			
 			case '2':
 				system("cls");
 				//Billetera electronica
 			break;
+			
 			default:
 				system("cls");
 				printf("\n-------------------------------------------------------------------------------");
@@ -262,16 +270,19 @@ void MenuCT(){
 				puts("\n\t\t\t\tVolviendo al Menu.");
 				printf("-------------------------------------------------------------------------------\n\n");
 			break;
+			
 			case '1':
 				system("cls");
 				//Choferes				
 				subMenuC();
 			break;
+			
 			case '2':
 				system("cls");
 				//Transportes
 				subMenuT();
 			break;
+			
 			default:
 				system("cls");
 				printf("\n-------------------------------------------------------------------------------");
@@ -369,10 +380,12 @@ void subMenuT(){
 				puts("\n\t\t\t\tVolviendo al Menu.");
 				printf("-------------------------------------------------------------------------------\n\n");
 			break;
+			
 			case '1':
 				system("cls");
-				//Carga de Transportes
+				altaUnidad(); //Carga de Transportes
 			break;
+			
 			case '2':
 				system("cls");
 				//pasajeros primer turno anual
@@ -383,6 +396,7 @@ void subMenuT(){
 				system("cls");
 				//Listado Transportes
 			break;
+			
 			case '4':
 				system("cls");
 				//Modificar Transportes
