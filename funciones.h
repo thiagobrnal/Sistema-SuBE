@@ -20,6 +20,8 @@ int compararFechas(struct fech, struct fech);
 void verMovimientosEntreFechas();
 void verMovimientosDeUsuarios();
 char elegirOD();
+void cantidadBeneficios();
+void consultaSaldo();
 
 //test
 void mostar_choferes();
@@ -1273,6 +1275,107 @@ int compararFechas(struct fech fechaInicio, struct fech fechaFin) {
 
 int fechaEstaEntre(struct fech fechaBuscar, struct fech fechaInicio, struct fech fechaFin) {
     return (compararFechas(fechaBuscar, fechaInicio) >= 0 && compararFechas(fechaBuscar, fechaFin) <= 0);
+}
+
+void cantidadBeneficios(){
+	FILE *arch;
+	int conBeneficios=0;
+	
+	arch=fopen("usuarios.dat","rb");
+	if(arch==NULL){
+		printf("\nError al abrir el archivo cuentas.dat");
+	}
+	else{
+		fread(&usuario, sizeof(usuario),1,arch);
+		
+		while(!feof(arch)){
+			
+			if(strcmp(usuario.tipo,"normal")!=0) {
+				
+				conBeneficios++;
+			}
+			
+			fread(&usuario, sizeof(usuario),1,arch);
+		}
+		
+		printf("\nHay %d usuarios registrados que poseen algun beneficio.", conBeneficios);
+	}	
+}
+
+void consultaSaldo(){
+	FILE *arch1, *arch2;
+	int idAux, encontro1=0, encontro2=0, dia1, mes, anio, hora, min;
+	long dniAux;
+	char nomAux[30], nomApe2[30];
+	
+	printf("Ingrese DNI: ");
+	scanf("%ld", &dniAux);
+	fflush(stdin);
+	
+	printf("Nombre y Apellido: ");
+	gets(nomAux);
+	strlwr(nomAux);
+	fflush(stdin);
+			
+	arch1 = fopen("usuarios.dat","r+b");
+	if(arch1==NULL){
+		printf("Error de apertura de archivo usuarios.dat");
+		printf("\n");
+	}else{		
+			
+		fread(&usuario, sizeof(usuario),1,arch1);
+		
+		while((!feof(arch1))&&(encontro1 == 0)){
+			
+			strcpy(nomApe2,usuario.nomApe);
+			strlwr(nomApe2);
+			
+			if((dniAux == usuario.dni)&& (strcmp(nomAux,nomApe2))==0){
+				encontro1=1;
+				idAux = usuario.id;
+			}else{
+				fread(&usuario, sizeof(usuario),1,arch1);
+			}
+		}
+		fclose(arch1);
+		
+		if(encontro1==0){
+			printf("\nNo se encuentra el usuario registrado");
+		}
+		else{
+			arch2 = fopen("cuentas.dat","r+b");
+			if(arch2==NULL){
+				printf("Error de apertura de archivo usuarios.dat");
+				printf("\n");
+			}else{		
+			
+				fread(&cuenta, sizeof(cuenta),1,arch2);
+		
+				while((!feof(arch2)) && (encontro2==0)){
+					
+					if(idAux==cuenta.id_usuario) {
+					
+					encontro2=1;
+					printf("\nDNI: %ld",dniAux);
+					printf("\nSaldo disponible: %.2f", cuenta.saldo);
+					dia1 = obtenerTiempo('d');
+					mes = obtenerTiempo('m');
+					anio = obtenerTiempo('a');
+					hora = obtenerTiempo('h');
+					min = obtenerTiempo('s');
+								
+					printf("\nFecha y hora: ");
+					printf("\n%d/", dia1);
+					printf("%d/", mes);
+					printf("%d", anio);
+					printf(" - %d:%d hs.", hora, min);
+					}
+					
+				}
+			}
+						
+		}
+	}	
 }
 
 //funciones de testeo:

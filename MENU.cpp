@@ -118,7 +118,7 @@ void MenuUsers(){
 			
 			case '3':
 				system("cls");
-				//Mostrar cantidad de usuarios
+				cantidadBeneficios(); //Mostrar cantidad de usuarios con BENEFICIOS
 			break;
 			
 			/*case '4':
@@ -172,7 +172,7 @@ void MenuSaldo(){
 			
 			case '2':
 				system("cls");
-				//Consultar Saldo
+				consultaSaldo(); //Consultar Saldo
 			break;
 			
 			case '3':
