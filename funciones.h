@@ -40,9 +40,12 @@ void altaUsuario() {
 	int ultId=0, ultId2=0, idaux;
 	long ultTarjeta=0, telAux=0, dniAux=0;
 	
-	printf("Ingrese su DNI o 0 para volver.\n");
-	scanf("%ld", &dniAux);
-	fflush(stdin);
+	printf("Ingrese su DNI o 0 para volver: ");
+	while(scanf("%ld", &dniAux) != 1){
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+	 
 	if(dniAux != 0){
 		if((arch1=fopen("usuarios.dat","a+b"))!=NULL ){
 		
@@ -114,9 +117,7 @@ void altaUsuario() {
 			printf("Error de apertura de archivo usuarios.dat");
 			printf("\n");
 		}
-	}
-	
-
+	}	
 }
 
 void beneficios() {
@@ -399,12 +400,14 @@ void cargaSaldo(){
 	long dniAux, tarjetaAux;
 	float monto, montoAnt, aux;
 	
-	
-	puts("Ingrese su DNI: ");
-	scanf("%ld", &dniAux);
-	fflush(stdin);
-	
-	
+	printf("\nIngrese su DNI o 0 para volver: ");
+	while(scanf("%ld", &dniAux) != 1){
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+	 
+	if(dniAux != 0){
+		
 	arch = fopen("usuarios.dat","r+b");
 	if(arch==NULL){
 		printf("Error de apertura de archivo usuarios.dat");
@@ -420,7 +423,6 @@ void cargaSaldo(){
 			}else{
 				fread(&usuario, sizeof(usuario),1,arch);
 			}
-
 		}
 		fclose(arch);
 		
@@ -469,9 +471,9 @@ void cargaSaldo(){
 						fclose(arch1);
 					}else{
 						fread(&cuenta,sizeof(cuenta),1,arch1);
-					}
-					
+					}				
 				}
+				
 				if(band == 1){
 					
 						arch2 = fopen("cargas.dat","a+b");
@@ -525,6 +527,7 @@ void cargaSaldo(){
 		}
 	}
 	fclose(arch);
+}
 }
 
 void bocaP(char x){
@@ -849,10 +852,14 @@ void usoTarjetaoBV(){
 	char orig[25], dest[25], daux, oaux, beneficioAux[50];
 	float precio = 0, saldoAux;
 	
-	printf("\nIngrese su DNI:");
-	scanf("%ld", &dniAux);
-	fflush(stdin);
-	
+	printf("\nIngrese su DNI o 0 para volver: ");
+	while(scanf("%ld", &dniAux) != 1){
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+	 
+	if(dniAux != 0){
+		
 	arch1 = fopen("usuarios.dat","a+b");
 	if(arch1 == NULL){
 		puts("No se pudo abrir el archivo usuarios.dat");
@@ -967,8 +974,7 @@ void usoTarjetaoBV(){
 										fread(&movimiento,sizeof(movimiento),1,arch3);
 									}
 									
-									
-								
+																	
 									movimiento.id = ultId + 1;
 									movimiento.id_usuario = idAux;
 									movimiento.dni_usuario = dniAux;
@@ -992,16 +998,13 @@ void usoTarjetaoBV(){
 								}
 							}
 							fclose(arch2);
-
 					}
 					
 				}
 			}
-		}
-
-		
+		}		
 	}
-	
+	}
 }
 
 void RecargasConDNI() {
@@ -1010,10 +1013,13 @@ void RecargasConDNI() {
 	int ultId, idAux,encontro1=0, encontro2=0;
 	long dniAux, telAux;
 	
-	printf("Ingrese su DNI y numero de telefono. ");
-	printf("\nDNI: ");
-	scanf("%ld", &dniAux);
-	fflush(stdin);
+	printf("\nIngrese su DNI o 0 para volver: ");
+	while(scanf("%ld", &dniAux) != 1){
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+	 
+	if(dniAux != 0){
 	
 	printf("\nTelefono: ");
 	scanf("%ld", &telAux);
@@ -1076,7 +1082,8 @@ void RecargasConDNI() {
 					}
 			}
 		}						
-	}		
+	}	
+}
 }
 
 void verMovimientosDeUsuarios(){
@@ -1326,9 +1333,13 @@ void consultaSaldo(){
 	long dniAux;
 	char nomAux[30], nomApe2[30];
 	
-	printf("Ingrese DNI: ");
-	scanf("%ld", &dniAux);
-	fflush(stdin);
+printf("\nIngrese su DNI o 0 para volver: ");
+	while(scanf("%ld", &dniAux) != 1){
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+	 
+	if(dniAux != 0){
 	
 	printf("Nombre y Apellido: ");
 	gets(nomAux);
@@ -1397,6 +1408,7 @@ void consultaSaldo(){
 						
 		}
 	}	
+}
 }
 
 void porcPasajeros(){
@@ -1534,7 +1546,6 @@ void ChoferConMasPasajeros(){
 	
 	printf("\nIngrese el anio que desea buscar: ");		
 	while(scanf("%d", &anioAux) != 1){
-		printf("\nentra al w del anio");
 		fflush(stdin);
 		printf(" Valor invalido\n");
 	 }
