@@ -1368,25 +1368,28 @@ void consultaSaldo(){
 				fread(&cuenta, sizeof(cuenta),1,arch2);
 		
 				while((!feof(arch2)) && (encontro2==0)){
-					
 					if(idAux==cuenta.id_usuario) {
 					
-					encontro2=1;
-					printf("\nDNI: %ld",dniAux);
-					printf("\nSaldo disponible: %.2f", cuenta.saldo);
-					dia1 = obtenerTiempo('d');
-					mes = obtenerTiempo('m');
-					anio = obtenerTiempo('a');
-					hora = obtenerTiempo('h');
-					min = obtenerTiempo('s');
+						encontro2=1;
+						printf("\nDNI: %ld",dniAux);
+						printf("\nSaldo disponible: %.2f", cuenta.saldo);
+						dia1 = obtenerTiempo('d');
+						mes = obtenerTiempo('m');
+						anio = obtenerTiempo('a');
+						hora = obtenerTiempo('h');
+						min = obtenerTiempo('s');
 								
-					printf("\nFecha y hora: ");
-					printf("\n%d/", dia1);
-					printf("%d/", mes);
-					printf("%d", anio);
-					printf(" - %d:%d hs.", hora, min);
+						printf("\nFecha y hora: ");
+						printf("\n%d/", dia1);
+						printf("%d/", mes);
+						printf("%d", anio);
+						printf(" - %d:%d hs.", hora, min);
 					}
-					
+					fread(&cuenta, sizeof(cuenta),1,arch2);
+				}
+				fclose(arch2);
+				if(encontro2==0){
+					puts("No se encontro registros");
 				}
 			}
 						
