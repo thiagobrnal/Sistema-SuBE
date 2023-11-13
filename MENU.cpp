@@ -336,6 +336,7 @@ void subMenuT(){
 			case '2':
 				system("cls");
 				//pasajeros primer turno anual
+				porcPasajeros();
 			break;
 			
 			/*
