@@ -27,6 +27,7 @@ int buscarTurno(int, int);
 int buscarIdUnidad(int);
 int buscarIdChofer(int, int);
 int encontrarIdMasFrecuente(int, int);
+void ChoferConMasPasajeros();
 
 //test
 void mostar_choferes();
