@@ -270,12 +270,12 @@ void subMenuC(){
 			
 			case '1':
 				system("cls");			
-				altaChofer(); //Carga Choferes				
+				altaChofer(); //Carga de Choferes				
 			break;
 			
 			case '2':
 				system("cls");
-				//Chofer con mas Pasajeros
+				ChoferConMasPasajeros(); //Chofer con mas Pasajeros en un mes especificado
 			break;
 			
 			/*

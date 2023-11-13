@@ -23,6 +23,10 @@ char elegirOD();
 void cantidadBeneficios();
 void consultaSaldo();
 void porcPasajeros();
+int buscarTurno(int, int);
+int buscarIdUnidad(int);
+int buscarIdChofer(int, int);
+int encontrarIdMasFrecuente(int, int);
 
 //test
 void mostar_choferes();
@@ -1426,6 +1430,208 @@ void porcPasajeros(){
 
 	printf("El porcentaje de pasajeros que viajan en el primer turno del a%co actual\n",164);
 	printf("Es de %.0f%% entre %d",porc,c);
+}
+
+// funciones utilizadas en la funcion ChoferConMasPasajeros
+int buscarTurno(int h, int m){
+
+int turn=0;
+
+	if((h>=0)&&(h<12)){
+		if((m>=0)&&(m<=59)){
+			turn=1;
+		}			
+	}
+	else{
+		turn=2;
+		}
+	
+	return turn;
+}
+
+int buscarIdUnidad(int uni){
+	FILE *arch2;
+	int idAux=0, encontro1=0;
+	
+	arch2 = fopen("unidades.dat","r+b");
+	if(arch2==NULL){
+		printf("Error de apertura de archivo movimientos.dat");
+		printf("\n");
+	}else{
+		fread(&unidad, sizeof(unidad),1,arch2);
+		
+		while((!feof(arch2))&&(encontro1 == 0)){
+										
+			if(uni==unidad.numUnidad){
+				encontro1=1;	
+				idAux = unidad.id;			
+			}else{
+				fread(&unidad, sizeof(unidad),1,arch2);
+			}
+		}
+		fclose(arch2);
+		
+		if(encontro1==0){
+			return 0;
+		}
+		else if(encontro1==1){
+			return idAux;
+		}				
+	}
+}
+
+int buscarIdChofer(int turnoAux, int idUni){
+	FILE *arch3;
+	int idAux2=0, encontro2=0;
+	
+	arch3 = fopen("asignaciones.dat","r+b");
+	if(arch3==NULL){
+		printf("Error de apertura de archivo movimientos.dat");
+		printf("\n");
+	}else{
+		fread(&asignacion, sizeof(asignacion),1,arch3);
+		
+		while((!feof(arch3))&&(encontro2 == 0)){
+										
+			if((turnoAux==asignacion.turno) && (idUni==asignacion.id_unidad)){
+				encontro2=1;
+				idAux2 = asignacion.id_chofer;
+			}else{
+				fread(&asignacion, sizeof(asignacion),1,arch3);
+			}
+		}
+		fclose(arch3);
+			
+		if(encontro2==0){
+			return 0;
+		}
+		else if(encontro2==1){
+			return idAux2;
+		}	
+	}			
+}
+
+int encontrarIdMasFrecuente(int frec[], int it) {
+	int maxCantPasajeros = 0;
+    int idMasFrecuente = 0;
+    
+    for (int i = 0; i < it; ++i) {
+        if (frec[i] > maxCantPasajeros) {
+            maxCantPasajeros = frec[i];
+            idMasFrecuente = i;
+        }
+    }
+
+    return idMasFrecuente;	
+}
+
+void ChoferConMasPasajeros(){
+	FILE *arch1, *arch4;
+	int mesAux=0, anioAux=0, turno=0, iteraciones=0, idUnidadAux=0, idChoferAux=0, encontro3=0;
+	int frecuencias[10000]= {0}, idChoferMax=0, correcto1, correcto2, band1=0, band2=0, band3=0;
+	char nomAux[30];
+	
+	printf("\nIngrese el anio que desea buscar: ");		
+	while(scanf("%d", &anioAux) != 1){
+		printf("\nentra al w del anio");
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+       
+	printf("\nIngrese el numero del mes que desea buscar: ");		
+	do{		
+		correcto1=0;
+		correcto2=0;
+		if(scanf("%d", &mesAux) == 1) {
+			fflush(stdin);
+			correcto1=1;
+			if((mesAux>0) && (mesAux<13)){
+				correcto2=1;
+			}
+			else {
+				printf(" Valor invalido\n");
+			}		
+		}		
+	}while((correcto1==0) && (correcto2==0));		
+						
+	arch1 = fopen("movimientos.dat","r+b");
+	if(arch1==NULL){
+		printf("Error de apertura de archivo movimientos.dat");
+		printf("\n");
+	}else{
+		fread(&movimiento, sizeof(movimiento),1,arch1);
+		
+		while(!feof(arch1)){
+			if(anioAux==movimiento.tFecha.anio){
+				if(mesAux==movimiento.tFecha.mes){
+					
+					turno = buscarTurno(movimiento.tHora.hora, movimiento.tHora.min);
+					if(turno==0){
+						printf("\nNo se encontro el turno.");
+					}
+					else{
+						band1=1;
+					}
+					
+					idUnidadAux = buscarIdUnidad(movimiento.nroUnidad);
+					if(idUnidadAux==0){
+						printf("\nNo se encontro el id de la unidad.");
+					}
+					else{
+						band2=2;
+					}
+					
+					idChoferAux = buscarIdChofer(turno, idUnidadAux);
+					if(idChoferAux==0){
+						printf("\nNo se encontro el id del chofer.");
+					}
+					else{
+						band3=3;
+					}
+					
+					if((band1!=1) && (band2!=2) && (band2!=3)){
+						printf("\nNo se ha podido realizar la busqueda correctamente.");						
+					}
+					else{
+						iteraciones++;					
+						frecuencias[idChoferAux]++;	
+					}																				
+				}
+			}
+			fread(&movimiento, sizeof(movimiento),1,arch1);
+		}
+		
+		fclose(arch1);
+		
+		idChoferMax = encontrarIdMasFrecuente(frecuencias, iteraciones);
+		
+		arch4 = fopen("choferes.dat","r+b");
+		if(arch4==NULL){
+			printf("Error de apertura de archivo movimientos.dat");
+			printf("\n");
+		}else{
+			fread(&chofer, sizeof(chofer),1,arch4);
+			
+			while((!feof(arch4))&&(encontro3 == 0)){
+				
+				if((idChoferMax==chofer.id)){
+					encontro3=1;
+					strcpy(nomAux, chofer.nomApe);
+				}
+				else{
+					fread(&chofer, sizeof(chofer),1,arch4);
+				}				
+			}			
+			fclose(arch4);	
+			
+			if(encontro3==0){
+				printf("\nNo se a encontrado el chofer");
+			}
+			else if(encontro3==1){
+				printf("El chofer con mas pasajeros en el mes %d es: %s", mesAux, nomAux);
+			}				
+		}				
+	}	
 }
 
 //funciones de testeo:
