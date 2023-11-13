@@ -916,18 +916,15 @@ void usoTarjetaoBV(){
 						strcpy(dest,"Candelaria");
 					}
 					
-					dia = obtenerTiempo('x');
+					x = obtenerTiempo('x');
 					hora = obtenerTiempo('h');
 					min = obtenerTiempo('s');
 						
-					if(hora >=5 && (hora<=21 && min < 59)){
-						precio = 0.00;	
-					}	
-						
-					if((x == 0) || (x == 1) || (strcmp(beneficioAux,"normal")==0)){
-						precio = tarifaUbicacion(oaux,daux);				
+					if((x == 0) || (x == 6) || (strcmp(beneficioAux,"normal")==0)){
+						precio = tarifaUbicacion(oaux,daux);	
+					}else if(hora >=5 && (hora<=21 && min < 59)){
+						precio = 0.00;
 					}
-					
 					
 					
 					arch2 = fopen("cuentas.dat","r+b");
