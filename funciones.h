@@ -33,9 +33,13 @@ void mostrar_movimientos();
 void altaUsuario() {
 	FILE *arch1, *arch2;
 	int ultId=0, ultId2=0, idaux;
-	long ultTarjeta=0, telAux=0;
+	long ultTarjeta=0, telAux=0, dniAux=0;
 	
-	if((arch1=fopen("usuarios.dat","a+b"))!=NULL ){
+	printf("Ingrese su DNI o 0 para volver.\n");
+	scanf("%ld", &dniAux);
+	fflush(stdin);
+	if(dniAux != 0){
+		if((arch1=fopen("usuarios.dat","a+b"))!=NULL ){
 		
 		fread(&usuario, sizeof(usuario),1,arch1);
 		while(!feof(arch1)){
@@ -47,9 +51,7 @@ void altaUsuario() {
 		idaux=usuario.id;
 		
 		fflush(stdin);
-		printf("Ingrese su DNI.\n");
-		scanf("%ld", &usuario.dni);
-		fflush(stdin);
+		usuario.dni = dniAux;
 		printf("Ingrese su nombre y apellido.\n");
 		gets(usuario.nomApe);
 		fflush(stdin);
@@ -102,11 +104,13 @@ void altaUsuario() {
 			printf("Error de apertura de archivo cuentas.dat");
 			printf("\n");
 			}		
+		}
+		else{
+			printf("Error de apertura de archivo usuarios.dat");
+			printf("\n");
+		}
 	}
-	else{
-		printf("Error de apertura de archivo usuarios.dat");
-		printf("\n");
-	}
+	
 
 }
 
@@ -384,9 +388,9 @@ int obtenerTiempo(char mensajero){
 void cargaSaldo(){
 	
 	FILE *arch, *arch1, *arch2, *aText;
-	int ultId=0, encontro=0, idAux, band = 0;
+	int ultId=0, encontro=0, idAux, band = 0, band1=0;
 	long nroControl = 5000;
-	char bocaPago, nroC[30];;
+	char bocaPago, nroC[30];
 	long dniAux, tarjetaAux;
 	float monto, montoAnt, aux;
 	
@@ -421,7 +425,7 @@ void cargaSaldo(){
 		}else if(encontro == 1){
 			
 			//Falta testear
-		//	do{
+			do{
 				puts("Ingrese Boca de Pago:");
 				puts("1.electronico");
 				puts("2.rapipago/pagofacil"); 
@@ -429,7 +433,10 @@ void cargaSaldo(){
 				puts("4.Sucursal");
 				scanf("%c",&bocaPago);
 				fflush(stdin);
-		//	}while(!(strncmp("1234",bocaPago,1)));
+				if((bocaPago=='1') || (bocaPago=='2') || (bocaPago=='3') || (bocaPago=='4')){
+					band1=1;
+				}
+			}while(band1==0);
 			
 		
 			puts("Ingrese monto:");
@@ -1072,11 +1079,12 @@ void RecargasConDNI() {
 
 void verMovimientosDeUsuarios(){
 	FILE *arch, *arch2;
-	int idAux, encontro = 0;
-	char nomAp[30];
+	int idAux, encontro = 0, band = 0;
+	char nomAp[30], nomApe2[30];
 	
 	puts("Ingrese Nombre y Apellido de la persona a buscar: ");
 	gets(nomAp);
+	strlwr(nomAp);
 	
 	arch2=fopen("usuarios.dat", "rb");
 	if(arch2==NULL){
@@ -1086,7 +1094,10 @@ void verMovimientosDeUsuarios(){
 		fread(&usuario, sizeof(usuario),1,arch2);
 		while((!feof(arch2)) && (encontro == 0)){
 			
-			if(strcmp(nomAp,usuario.nomApe)==0){
+			strcpy(nomApe2,usuario.nomApe);
+			strlwr(nomApe2);
+			
+			if(strcmp(nomAp,nomApe2)==0){
 				idAux = usuario.id;
 				encontro = 1;	
 			}
@@ -1109,6 +1120,7 @@ void verMovimientosDeUsuarios(){
 		while(!feof(arch)){
 			
 			if(movimiento.id_usuario == idAux){
+				band = 1;
 				printf("\nNro Unidad: %d", movimiento.nroUnidad);
 				printf("\nOrigen: ");
 				puts(movimiento.origen);
@@ -1131,6 +1143,9 @@ void verMovimientosDeUsuarios(){
 		}
 	
 		fclose(arch);	
+		if(band == 0){
+			puts("El usuario todavia no posee movimientos.");
+		}
 	}
 	}
 	
@@ -1408,7 +1423,6 @@ void porcPasajeros(){
 	  cC-------x= (100*cC)/c */
 	
 	porc = (100*contCondicion)/c;
-
 
 	printf("El porcentaje de pasajeros que viajan en el primer turno del a%co actual\n",164);
 	printf("Es de %.0f%% entre %d",porc,c);
