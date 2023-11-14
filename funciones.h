@@ -2,7 +2,7 @@
 #include <string.h>
 
 void altaUsuario();
-void beneficios();
+int beneficios();
 void listarCuentas();
 void altaChofer();
 void listaUsuarios();
@@ -37,7 +37,7 @@ void mostrar_movimientos();
 
 void altaUsuario() {
 	FILE *arch1, *arch2;
-	int ultId=0, ultId2=0, idaux;
+	int ultId=0, ultId2=0, idaux, requisito=0;
 	long ultTarjeta=0, telAux=0, dniAux=0;
 	
 	printf("Ingrese su DNI o 0 para volver: ");
@@ -47,83 +47,90 @@ void altaUsuario() {
 	 }
 	 
 	if(dniAux != 0){
-		if((arch1=fopen("usuarios.dat","a+b"))!=NULL ){
-		
-		fread(&usuario, sizeof(usuario),1,arch1);
-		while(!feof(arch1)){
-			ultId = usuario.id;
+				
+		arch1=fopen("usuarios.dat","a+b");
+		if(arch1==NULL){
+			printf("\nError al abrir el archivo usuarios.dat");
+		}
+		else{									
 			fread(&usuario, sizeof(usuario),1,arch1);
-		}
-		
-		usuario.id = ultId + 1;
-		idaux=usuario.id;
-		
-		fflush(stdin);
-		usuario.dni = dniAux;
-		printf("Ingrese su nombre y apellido.\n");
-		gets(usuario.nomApe);
-		fflush(stdin);
-		printf("Ingrese su fecha de nacimiento.\n");
-		printf("dia:\n");
-		scanf("%d", &usuario.fecha.dia);
-		fflush(stdin);
-		printf("mes:\n");
-		scanf("%d", &usuario.fecha.mes);
-		fflush(stdin);
-		printf("anio:\n");
-		scanf("%d", &usuario.fecha.anio);
-		fflush(stdin);
-		printf("Ingrese su direccion.\n");
-		gets(usuario.direccion);
-		fflush(stdin);
-		printf("Ingrese su numero de telefono.\n");
-		scanf("%ld", &usuario.telefono);
-		telAux=usuario.telefono;
-		fflush(stdin);
-		
-		beneficios();
-		
-		fwrite(&usuario,sizeof(usuario),1,arch1);
-			
-		fclose(arch1);
-		puts("usuario cargado exitosamente.");	
-				
-		
-			if((arch2=fopen("cuentas.dat","a+b"))!=NULL){
-				
-				fread(&cuenta, sizeof(cuenta),1,arch2);
-				while(!feof(arch2)){
-					ultId2 = cuenta.id;
-					ultTarjeta = cuenta.nroTarjeta;
-					fread(&cuenta, sizeof(cuenta),1,arch2);
-				}
-				
-				cuenta.id = ultId2 + 1;				
-				cuenta.id_usuario=idaux;
-				cuenta.saldo=0;
-				cuenta.nroTarjeta = ultTarjeta + 1;
-				cuenta.nroCel=telAux;
-				
-				fwrite(&cuenta,sizeof(cuenta),1,arch2);
-				fclose(arch2);
-				
+			while(!feof(arch1)){
+				ultId = usuario.id;
+				fread(&usuario, sizeof(usuario),1,arch1);
 			}
-			else{
-			printf("Error de apertura de archivo cuentas.dat");
-			printf("\n");
-			}		
+		
+			usuario.id = ultId + 1;
+			idaux=usuario.id;
+		
+			fflush(stdin);
+			usuario.dni = dniAux;
+			printf("Ingrese su nombre y apellido.\n");
+			gets(usuario.nomApe);
+			fflush(stdin);
+			printf("Ingrese su fecha de nacimiento.\n");
+			printf("dia:\n");
+			scanf("%d", &usuario.fecha.dia);
+			fflush(stdin);
+			printf("mes:\n");
+			scanf("%d", &usuario.fecha.mes);
+			fflush(stdin);
+			printf("anio:\n");
+			scanf("%d", &usuario.fecha.anio);
+			fflush(stdin);
+			printf("Ingrese su direccion.\n");
+			gets(usuario.direccion);
+			fflush(stdin);
+			printf("Ingrese su numero de telefono.\n");
+			scanf("%ld", &usuario.telefono);
+			telAux=usuario.telefono;
+			fflush(stdin);
+		
+			requisito=beneficios();
+		
+			if(requisito==2) {
+				printf("\nIntente de nuevo cuando poseea los requisitos para el beneficio.");
+				fclose(arch1);
+			}
+			else if(requisito==1) {
+			
+				fwrite(&usuario,sizeof(usuario),1,arch1);
+			
+				fclose(arch1);
+				puts("usuario cargado exitosamente.");	
+				
+		
+					if((arch2=fopen("cuentas.dat","a+b"))!=NULL){
+				
+						fread(&cuenta, sizeof(cuenta),1,arch2);
+						while(!feof(arch2)){
+							ultId2 = cuenta.id;
+							ultTarjeta = cuenta.nroTarjeta;
+							fread(&cuenta, sizeof(cuenta),1,arch2);
+						}
+				
+						cuenta.id = ultId2 + 1;				
+						cuenta.id_usuario=idaux;
+						cuenta.saldo=0;
+						cuenta.nroTarjeta = ultTarjeta + 1;
+						cuenta.nroCel=telAux;
+				
+						fwrite(&cuenta,sizeof(cuenta),1,arch2);
+						fclose(arch2);
+				
+					}
+					else{
+					printf("Error de apertura de archivo cuentas.dat");
+					printf("\n");
+					}		
+			}	
 		}
-		else{
-			printf("Error de apertura de archivo usuarios.dat");
-			printf("\n");
-		}
-	}	
+	}
 }
 
-void beneficios() {
+int beneficios() {
 	
 	char op;
-	int band=0;
+	int band=0, requisitoAux=0;
 	
 	printf("\nQue tipo de sube desea?\n ");
 	printf("ingrese 0 para sube normal.\n");
@@ -140,6 +147,7 @@ void beneficios() {
 		
 		case '0':
 			strcpy(usuario.tipo,"normal");
+			requisitoAux=1;
 		break;
 		
 		case '1':
@@ -150,9 +158,11 @@ void beneficios() {
 			
 			if(band==1) {
 				strcpy(usuario.tipo,"boleto estudiantil gratuito");
+				requisitoAux=1;
 			}
 			else if(band==2) {
-				printf("No se puede computar el beneficio, debe preesentar la constancia.\n");	
+				printf("No se puede computar el beneficio, debe preesentar la constancia.\n");
+				requisitoAux=2;	
 			}
 			
 		break;
@@ -165,9 +175,11 @@ void beneficios() {
 			
 			if(band==1) {
 				strcpy(usuario.tipo,"beneficio por discapacidad");
+				requisitoAux=1;
 			}
 			else if(band==2) {
 				printf("No se puede computar el beneficio, debe preesentar la constancia.\n");	
+				requisitoAux=2;
 			}
 			
 		break;
@@ -180,9 +192,11 @@ void beneficios() {
 			
 			if(band==1) {
 				strcpy(usuario.tipo,"beneficio de mayor de edad");
+				requisitoAux=1;
 			}
 			else if(band==2) {
 				printf("no se puede computar el beneficio, debe tener la edad solicitada.\n");	
+				requisitoAux=2;
 			}
 			
 		break;
@@ -195,9 +209,11 @@ void beneficios() {
 			
 			if(band==1) {
 				strcpy(usuario.tipo,"beneficio ex-combatiente de malvinas");
+				requisitoAux=1;
 			}
 			else if(band==2) {
 				printf("no se puede computar el beneficio, debe preesentar la constancia.\n");	
+				requisitoAux=2;
 			}
 						
 		break;
@@ -210,7 +226,7 @@ void beneficios() {
 		break;
 	}
 	
-	
+	return requisitoAux;
 }
 
 void listarCuentas(){
@@ -433,6 +449,7 @@ void cargaSaldo(){
 			
 			//Falta testear
 			do{
+				fflush(stdin);
 				puts("Ingrese Boca de Pago:");
 				puts("1.electronico");
 				puts("2.rapipago/pagofacil"); 
@@ -552,12 +569,16 @@ void bocaP(char x){
 void altaUnidad() {
 	FILE *arch;
 	int ultId=0, opc=0, numU=0, encontro=0, idAux=0, opCorrecta=0;
-	
+
 	fflush(stdin);
-	printf("Ingrese numero de unidad: ");
-	scanf("%d", &numU);
-	fflush(stdin);
-	
+	printf("Ingrese el numero de la unidad o 0 para volver: ");
+	while(scanf("%d", &numU) != 1){
+		fflush(stdin);
+		printf(" Valor invalido\n");
+	 }
+	 
+	 if(numU != 0){
+		
 	arch=fopen("unidades.dat","a+b");
 	if(arch==NULL){
 		printf("\nError al abrir el archivo unidades.dat");
@@ -637,7 +658,7 @@ void altaUnidad() {
 			
 			asignaciones(idAux, numU);	
 	}
-		
+}
 }
 
 void asignaciones(int idUnidad, int nUni){
@@ -669,14 +690,18 @@ void asignaciones(int idUnidad, int nUni){
 			printf("\nLa linea %d ya tiene 2 turnos cargados", nUni);
 			
 		}
-		else if((c==0) || (c==1)){
+		else if((c==0) || (c==1)){						
 			printf("\nIngrese el DNI del chofer a asignar: ");
-			scanf("%ld", &dniAux);
-			fflush(stdin);
+			while(scanf("%ld", &dniAux) != 1){
+				fflush(stdin);
+				printf(" Valor invalido\n");
+			 }
 			
 			printf("\nIngrese su numero de telefono: ");
-			scanf("%ld", &telAux);
-			fflush(stdin);
+			while(scanf("%ld", &telAux) != 1){
+				fflush(stdin);
+				printf(" Valor invalido\n");
+			 }		
 						
 			arch2=fopen("choferes.dat","a+b");
 			if(arch2==NULL){
@@ -766,13 +791,15 @@ void asignaciones(int idUnidad, int nUni){
 								printf("\nTurno %d asignado correctamente", opc2);
 							}							
 						}
+						
+						fwrite(&asignacion,sizeof(asignacion),1,arch1);
+						fclose(arch1);
 					}																															
 				}		
 			}			
 		}
 				
-		fwrite(&asignacion,sizeof(asignacion),1,arch1);
-		fclose(arch1);
+		
 						
 	}
 }
@@ -1340,7 +1367,7 @@ printf("\nIngrese su DNI o 0 para volver: ");
 	 }
 	 
 	if(dniAux != 0){
-	
+	fflush(stdin);
 	printf("Nombre y Apellido: ");
 	gets(nomAux);
 	strlwr(nomAux);
@@ -1541,7 +1568,7 @@ int encontrarIdMasFrecuente(int frec[], int it) {
 void ChoferConMasPasajeros(){
 	FILE *arch1, *arch4;
 	int mesAux=0, anioAux=0, turno=0, iteraciones=0, idUnidadAux=0, idChoferAux=0, encontro3=0;
-	int frecuencias[10000]= {0}, idChoferMax=0, correcto1, correcto2, band1=0, band2=0, band3=0;
+	int frecuencias[10000]={0}, idChoferMax=0, correcto1, correcto2, band1=0, band2=0, band3=0;
 	char nomAux[30];
 	
 	printf("\nIngrese el anio que desea buscar: ");		
@@ -1574,6 +1601,10 @@ void ChoferConMasPasajeros(){
 		fread(&movimiento, sizeof(movimiento),1,arch1);
 		
 		while(!feof(arch1)){
+			band1=0;
+			band2=0;
+			band3=0;
+			
 			if(anioAux==movimiento.tFecha.anio){
 				if(mesAux==movimiento.tFecha.mes){
 					
@@ -1594,20 +1625,16 @@ void ChoferConMasPasajeros(){
 					}
 					
 					idChoferAux = buscarIdChofer(turno, idUnidadAux);
-					if(idChoferAux==0){
-						printf("\nNo se encontro el id del chofer.");
-					}
-					else{
+					if(idChoferAux!=0){
 						band3=3;
 					}
 					
-					if((band1!=1) && (band2!=2) && (band2!=3)){
-						printf("\nNo se ha podido realizar la busqueda correctamente.");						
+					if((band1==1) && (band2==2) && (band3==3)){
+						
+						iteraciones++;																
+						frecuencias[idChoferAux]++;							
 					}
-					else{
-						iteraciones++;					
-						frecuencias[idChoferAux]++;	
-					}																				
+																									
 				}
 			}
 			fread(&movimiento, sizeof(movimiento),1,arch1);
@@ -1616,7 +1643,7 @@ void ChoferConMasPasajeros(){
 		fclose(arch1);
 		
 		idChoferMax = encontrarIdMasFrecuente(frecuencias, iteraciones);
-		
+				
 		arch4 = fopen("choferes.dat","r+b");
 		if(arch4==NULL){
 			printf("Error de apertura de archivo movimientos.dat");
